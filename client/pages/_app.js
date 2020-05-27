@@ -12,7 +12,6 @@ const AppComponent = ({ Component, pageProps, currentUser }) => {
 };
 
 AppComponent.getInitialProps = async ({ Component, ctx: context }) => {
-  console.log('AppComponent GIP');
   const client = buildClient(context);
   const { data } = await client.get('/api/users/currentuser');
   let pageProps = {};

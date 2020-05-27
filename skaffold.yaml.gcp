@@ -4,12 +4,12 @@ deploy:
   kubectl:
     manifests:
       - ./infra/k8s/*.yaml
-      - ./infra/local/*.yaml
+      - ./infra/gcp/*.yaml
 build:
-  local:
-    push: true
+  googleCloudBuild:
+    projectId: ticketing-dev-277912
   artifacts:
-    - image: holmestm/auth
+    - image: eu.gcr.io/ticketing-dev-277912/auth
       context: auth
       docker:
         dockerfile: Dockerfile
@@ -17,7 +17,7 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: holmestm/client
+    - image: eu.gcr.io/ticketing-dev-277912/client
       context: client
       docker:
         dockerfile: Dockerfile
