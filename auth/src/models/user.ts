@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import { Password } from '../services/password';
-import jwt from 'jsonwebtoken';
 
 // an interface that describes the properties that are required to create a new User
 interface UserAttrs {

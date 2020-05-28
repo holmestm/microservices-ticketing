@@ -28,3 +28,16 @@ Brief notes for me.
 --   kubectl expose deployment ingress-nginx-controller -n kube-system --target-port=80 --type=ClusterIP
 --   kubectl exec -it client-depl-5865bbfcd7-vq8mb -- sh
 --   /app # nslookup ingress-nginx-controller.kube-system.svc.cluster.local 
+
+# Common Library
+* Created an organisation within npmjs.com called gravitaz, invited my own account to team
+* Create a new directory in my source tree called common
+* -> npm init -y to create package.json
+* edited package.json changing name to "@holmestm/common"
+* -> npm login to my own account
+* -> npm publish --access public
+* we're going to write typescript but publish javascript
+* -> tsc --init to add typescript (creates a tsconfig.json file)
+* -> npm install typescript del-cli --save-dev
+* edit tsconfig.json: uncomment declaration and set OutDir to ./build
+* edit package.json: add clean
