@@ -28,6 +28,9 @@ Brief notes for me.
 --   kubectl expose deployment ingress-nginx-controller -n kube-system --target-port=80 --type=ClusterIP
 --   kubectl exec -it client-depl-5865bbfcd7-vq8mb -- sh
 --   /app # nslookup ingress-nginx-controller.kube-system.svc.cluster.local 
+* Secrets 
+* kubectl create secret tls ticketing.dev --key ticketing.dev.key --cert ticketing.dev.crt
+* kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf
 
 # Common Library
 * Created an organisation within npmjs.com called gravitaz, invited my own account to team

@@ -9,8 +9,6 @@ spec:
   tls:
     - hosts:
         - ticketing.dev
-      # This assumes tls-secret exists and the SSL
-      # certificate contains a CN for foo.bar.com
       secretName: ticketing.dev
   rules:
     - host: ticketing.dev
@@ -19,6 +17,10 @@ spec:
           - path: /api/users/?(.*)
             backend:
               serviceName: auth-srv
+              servicePort: 3000
+          - path: /api/tickets/?(.*)
+            backend:
+              serviceName: tickets-srv
               servicePort: 3000
           - path: /?(.*)
             backend:

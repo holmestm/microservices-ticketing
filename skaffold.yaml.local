@@ -17,6 +17,14 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
+    - image: holmestm/tickets
+      context: tickets
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
     - image: holmestm/client
       context: client
       docker:
