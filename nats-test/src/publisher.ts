@@ -1,7 +1,7 @@
 import nats from 'node-nats-streaming';
 console.clear();
 
-const stan = nats.connect('ticketing', 'abc', {
+const stan = nats.connect('ticketing', 'publish_1', {
   url: 'http://ticketing.dev:4222',
 });
 
