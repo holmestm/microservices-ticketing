@@ -1,6 +1,4 @@
-import { Publisher } from './base-publisher';
-import { TicketCreatedEvent } from './ticket-created-event';
-import { Subjects, TEvent } from './types';
+import { Publisher, Subjects, TicketCreatedEvent } from '@gravitaz/common';
 
 export class TicketCreatedPublisher extends Publisher<TicketCreatedEvent> {
   readonly subject = Subjects.TicketCreated;
