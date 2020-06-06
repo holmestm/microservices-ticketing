@@ -1,20 +1,38 @@
 import mongoose from 'mongoose';
-
+import { natsWrapper } from './nats-wrapper';
 import { app } from './app';
 
 const start = async () => {
-  if (!process.env.JWT_KEY) {
-    throw new Error('JWT_KEY is not defined');
-  } else {
-    console.log('JWT_KEY defined', 'SECRET');
-  }
-  if (!process.env.MONGO_URI) {
-    throw new Error('MONGO_URI is not defined');
-  } else {
-    console.log('MONGO_URI defined', process.env.MONGO_URI);
-  }
+  const envvars = [
+    'JWT_KEY',
+    'MONGO_URI',
+    'NATS_CLIENT_ID',
+    'NATS_URL',
+    'NATS_CLUSTER_ID',
+  ];
+  envvars.map((v) => {
+    if (!process.env[v]) {
+      throw new Error(`${v} is not defined`);
+    }
+    console.log(`${v} = ${process.env[v]}`);
+  });
+  const {
+    JWT_KEY,
+    MONGO_URI,
+    NATS_CLIENT_ID,
+    NATS_URL,
+    NATS_CLUSTER_ID,
+  } = process.env;
   try {
-    await mongoose.connect(process.env.MONGO_URI, {
+    await natsWrapper.connect(NATS_CLUSTER_ID!, NATS_CLIENT_ID!, NATS_URL!);
+    natsWrapper.client.on('close', () => {
+      console.log('NATS connection closed');
+      process.exit();
+    });
+    process.on('SIGINT', () => natsWrapper.client.close());
+    process.on('SIGTERM', () => natsWrapper.client.close());
+
+    await mongoose.connect(MONGO_URI!, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,

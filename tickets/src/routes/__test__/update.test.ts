@@ -2,6 +2,7 @@ import request from 'supertest';
 import { app } from '../../app';
 import { Ticket } from '../../models/ticket';
 import { Types as MongooseTypes } from 'mongoose';
+import { natsWrapper } from '../../nats-wrapper';
 
 const user2 = { id: '67890', email: 'test2@test.com' };
 const newTicket = { title: 'Arsenal Leeds', price: 20.5 };
@@ -116,4 +117,15 @@ it('updates a ticket with valid inputs', async () => {
 
   const ticket = await Ticket.findById(storedTickets[0].id);
   expect(ticket?.price).toEqual(newTicket.price);
+});
+
+it('publishes an event', async () => {
+  const storedTickets = await createSampleTickets();
+  await request(app)
+    .put(`/api/tickets/${storedTickets[0].id}`)
+    .set('Cookie', global.signin())
+    .send(newTicket)
+    .expect(200);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });
