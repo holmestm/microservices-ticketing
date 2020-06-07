@@ -1,0 +1,623 @@
+{
+	"info": {
+		"_postman_id": "ff3436b0-993d-4244-9923-41dac73d64ac",
+		"name": "Ticketing Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Signup test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6ce3e922-86a4-4ba4-addd-d6907577d7ce",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Status code is \" + responseCode.code] = (responseCode.code === 200 || responseCode.code === 201);",
+							"let expectedEmail = pm.collectionVariables.get('email');",
+							"tests[\"Email returned\"] = jsonData.email === expectedEmail",
+							"tests[\"Id defined\"] = jsonData.id !== undefined;",
+							"pm.collectionVariables.set(\"userId\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "90e1dada-7aca-4e9a-9181-b5283c19f32d",
+						"exec": [
+							"const email = Math.random().toString(36).substr(2, 5) + '@test.com';",
+							"pm.collectionVariables.set('email', email);",
+							"let body = { \"email\": email, \"password\": \"abcdefghi\"}",
+							"pm.environment.set(\"request_body\", JSON.stringify(body))",
+							"console.log(request.data)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{request_body}}",
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://ticketing.dev/api/users/signup",
+					"protocol": "https",
+					"host": [
+						"ticketing",
+						"dev"
+					],
+					"path": [
+						"api",
+						"users",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Current User Test After Signup",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "127c300c-4656-4d3a-bb40-753dc8a906b1",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"let expectedEmail = pm.collectionVariables.get('email');",
+							"let expectedId    = pm.collectionVariables.get('userId');",
+							"",
+							"tests[\"Expected email\"] = jsonData.currentUser.id === expectedId;",
+							"tests[\"Expected user id\"] = jsonData.currentUser.email === expectedEmail;",
+							"tests[\"Status code is \" + responseCode.code] = (responseCode.code === 200 || responseCode.code === 201);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://ticketing.dev/api/users/currentuser",
+					"protocol": "https",
+					"host": [
+						"ticketing",
+						"dev"
+					],
+					"path": [
+						"api",
+						"users",
+						"currentuser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Signout User Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dbdcbad6-dac1-4dd2-8cfc-5b6cdea82b54",
+						"exec": [
+							"tests[\"Status code is \" + responseCode.code] = (responseCode.code === 200 || responseCode.code === 201);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://ticketing.dev/api/users/signout",
+					"protocol": "https",
+					"host": [
+						"ticketing",
+						"dev"
+					],
+					"path": [
+						"api",
+						"users",
+						"signout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Current User Test No Session",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://ticketing.dev/api/users/currentuser",
+					"protocol": "https",
+					"host": [
+						"ticketing",
+						"dev"
+					],
+					"path": [
+						"api",
+						"users",
+						"currentuser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Signin test after signout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "98a793ba-b1de-4ace-9e90-e5f1db90eaee",
+						"exec": [
+							"//pm.collectionVariables.set(\"userId\", jsonData.id);",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"let expectedEmail = pm.collectionVariables.get('email');",
+							"let expectedId = pm.collectionVariables.get('userId');",
+							"",
+							"tests[\"Expected user id\"] = jsonData.id === expectedId;",
+							"tests[\"Expected email\"] = jsonData.email === expectedEmail;",
+							"tests[\"Status code is \" + responseCode.code] = (responseCode.code === 200 || responseCode.code === 201);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "1e934407-fbd9-4d63-bbd0-b3a5cd1d56be",
+						"exec": [
+							"const email = pm.collectionVariables.get('email');",
+							"let body = { \"email\": email, \"password\": \"abcdefghi\" }",
+							"pm.environment.set(\"request_body\", JSON.stringify(body))",
+							"console.log(request.data)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{request_body}}",
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://ticketing.dev/api/users/signin",
+					"protocol": "https",
+					"host": [
+						"ticketing",
+						"dev"
+					],
+					"path": [
+						"api",
+						"users",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Current User Test After Signin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "afe96b77-0565-47c1-825a-f6ae6efefabd",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"let expectedEmail = pm.collectionVariables.get('email');",
+							"let expectedId    = pm.collectionVariables.get('userId');",
+							"",
+							"tests[\"Expected email\"] = jsonData.currentUser.id === expectedId;",
+							"tests[\"Expected user id\"] = jsonData.currentUser.email === expectedEmail;",
+							"tests[\"Status code is \" + responseCode.code] = (responseCode.code === 200 || responseCode.code === 201);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://ticketing.dev/api/users/currentuser",
+					"protocol": "https",
+					"host": [
+						"ticketing",
+						"dev"
+					],
+					"path": [
+						"api",
+						"users",
+						"currentuser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a ticket whilst signed in",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "afe96b77-0565-47c1-825a-f6ae6efefabd",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"let ticketId = jsonData.id;",
+							"",
+							"tests[\"Status code is \" + responseCode.code] = responseCode.code === 201;",
+							"tests[\"Expect ticket id\"] = jsonData.id !== undefined;",
+							"pm.collectionVariables.set('ticketId');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"Arsenal Leeds\",\n\t\"price\": 50\n}"
+				},
+				"url": {
+					"raw": "https://ticketing.dev/api/tickets",
+					"protocol": "https",
+					"host": [
+						"ticketing",
+						"dev"
+					],
+					"path": [
+						"api",
+						"tickets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create another ticket whilst signed in",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "afe96b77-0565-47c1-825a-f6ae6efefabd",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"let ticketId = jsonData.id;",
+							"",
+							"tests[\"Status code is \" + responseCode.code] = responseCode.code === 201;",
+							"tests[\"Expect ticket id\"] = jsonData.id !== undefined;",
+							"pm.collectionVariables.set('ticketId');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"Arsenal Leeds\",\n\t\"price\": 50\n}"
+				},
+				"url": {
+					"raw": "https://ticketing.dev/api/tickets",
+					"protocol": "https",
+					"host": [
+						"ticketing",
+						"dev"
+					],
+					"path": [
+						"api",
+						"tickets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve all tickets",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "afe96b77-0565-47c1-825a-f6ae6efefabd",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Status code is \" + responseCode.code] = responseCode.code === 200;",
+							"",
+							"let returnedTickets = jsonData;",
+							"tests[\"Returned data is an array \"] = returnedTickets.length !== undefined;",
+							"",
+							"let firstTicket = returnedTickets[0];",
+							"let ticketId = firstTicket.id;",
+							"let userId = firstTicket.userId;",
+							"",
+							"pm.collectionVariables.set('ticketId', ticketId);",
+							"pm.collectionVariables.set('ticketUserId', userId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://ticketing.dev/api/tickets",
+					"protocol": "https",
+					"host": [
+						"ticketing",
+						"dev"
+					],
+					"path": [
+						"api",
+						"tickets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET ticket by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "afe96b77-0565-47c1-825a-f6ae6efefabd",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"var expectedId = pm.collectionVariables.get('ticketId');",
+							"let expectedUserId = pm.collectionVariables.get('ticketUserId');",
+							"",
+							"let ticketId = jsonData.id;",
+							"let userId = jsonData.userId;",
+							"",
+							"tests[\"Status code is \" + responseCode.code] = responseCode.code === 200;",
+							"tests[`Expect ticket id to be ${expectedId} got ${ticketId}`] = ticketId === expectedId;",
+							"tests[`Expect user id to be ${expectedUserId} got ${userId}`] = userId === expectedUserId;",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://ticketing.dev/api/tickets/{{ticketId}}",
+					"protocol": "https",
+					"host": [
+						"ticketing",
+						"dev"
+					],
+					"path": [
+						"api",
+						"tickets",
+						"{{ticketId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT ticket by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1a9ebe99-362f-4a37-83fd-96e888953fbf",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"var expectedId = pm.collectionVariables.get('ticketId1');",
+							"let expectedUserId = pm.collectionVariables.get('userId');",
+							"",
+							"let ticketId = jsonData.id;",
+							"let userId = jsonData.userId;",
+							"",
+							"tests[\"Status code is \" + responseCode.code] = responseCode.code === 200;",
+							"tests[`Expect ticket id to be ${expectedId} got ${ticketId}`] = ticketId === expectedId;",
+							"tests[`Expect user id to be ${expectedUserId} got ${userId}`] = userId === expectedUserId;",
+							"tests[`Expect price to now be 75 got ${jsonData.price}`] = jsonData.price == 75;",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "ef73f68f-3d8b-4164-bee7-eee8c96cef1c",
+						"exec": [
+							"/*let rawRB = pm.request.body.raw;",
+							"console.log(\"before\", rawRB)",
+							"let RB = JSON.parse(rawRB);",
+							"RB = {...RB, ",
+							"    \"userId\": pm.collectionVariables.get('userId'),",
+							"    \"id\": pm.collectionVariables.get('ticketId1') ",
+							"};",
+							"pm.request.body.raw = JSON.stringify(RB);",
+							"console.log(\"after\", pm.request.body.raw);",
+							"*/"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"Arsenal Leeds\",\n    \"price\": 75\n}"
+				},
+				"url": {
+					"raw": "https://ticketing.dev/api/tickets/{{ticketId1}}",
+					"protocol": "https",
+					"host": [
+						"ticketing",
+						"dev"
+					],
+					"path": [
+						"api",
+						"tickets",
+						"{{ticketId1}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"id": "c4b76176-f685-4ded-afc1-19d29187dbae",
+			"key": "email",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "b04616bb-bc07-4d12-bdd7-d7dcd448be38",
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "de46f29a-3046-4c13-9d4a-9dd3aba24955",
+			"key": "ticketId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "680b255d-b573-4007-a0b9-ccc3d2bb0707",
+			"key": "ticketUserId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "1a250cae-f064-48cd-802f-b3f724982fdf",
+			"key": "ticketId1",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "baee822d-5830-4bd9-ab7f-bd8f122c4427",
+			"key": "ticketId2",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
