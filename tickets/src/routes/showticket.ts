@@ -14,7 +14,7 @@ router.get(
   validateRequest,
   async (req: Request, res: Response) => {
     const ticket = await Ticket.findById(req.params.id);
-    console.log('GET Ticket by id');
+    console.debug('GET Ticket by id');
     if (!ticket) {
       throw new NotFoundError(req);
     }

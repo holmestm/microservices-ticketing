@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get('/api/tickets', async (req: Request, res: Response) => {
   let tickets = await Ticket.find();
-  console.log('GET all tickets');
+  console.debug('GET all tickets');
 
   if (!tickets) {
     tickets = [];

@@ -3,6 +3,7 @@ import { app } from '../../app';
 import { Ticket } from '../../models/ticket';
 import { Types as MongooseTypes } from 'mongoose';
 import { natsWrapper } from '../../nats-wrapper';
+import { Subjects } from '@gravitaz/common';
 
 const user2 = { id: '67890', email: 'test2@test.com' };
 const newTicket = { title: 'Arsenal Leeds', price: 20.5 };
@@ -128,4 +129,9 @@ it('publishes an event', async () => {
     .expect(200);
 
   expect(natsWrapper.client.publish).toHaveBeenCalled();
+  expect(natsWrapper.client.publish).toHaveBeenCalledWith(
+    Subjects.TicketUpdated,
+    expect.any(String),
+    expect.any(Function)
+  );
 });
