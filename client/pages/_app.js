@@ -11,6 +11,8 @@ const AppComponent = ({ Component, pageProps, currentUser }) => {
   );
 };
 
+// this can be called both within a server context and a client context i.e. within a browser
+
 AppComponent.getInitialProps = async ({ Component, ctx: context }) => {
   const client = buildClient(context);
   const { data } = await client.get('/api/users/currentuser');

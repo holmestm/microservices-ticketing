@@ -4,7 +4,7 @@ import { Ticket } from '../../models/ticket';
 import { Types as MongooseTypes } from 'mongoose';
 
 it('returns a 400 if id format is invalid', async () => {
-  await request(app).get('/api/tickets/123').send().expect(400);
+  await request(app).get('/api/tickets/123').expect(400);
 });
 
 it('returns a 404 if ticket is not found with a valid id', async () => {
