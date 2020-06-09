@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { Ticket } from '../models/ticket';
 import {
-  NotFoundError,
+  ResourceNotFoundError,
   validateRequest,
   requireAuth,
   NotAuthorizedError,
@@ -40,7 +40,7 @@ router.put(
   async (req: Request, res: Response) => {
     const ticket = await Ticket.findById(req.params.id);
     if (!ticket) {
-      throw new NotFoundError(req);
+      throw new ResourceNotFoundError('ticket not found');
     }
     if (ticket.userId !== req.currentUser!.id) {
       throw new NotAuthorizedError();

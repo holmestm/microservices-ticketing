@@ -1,5 +1,5 @@
-import { Publisher, Subjects, OrderDeletedEvent } from '@gravitaz/common';
+import { Publisher, Subjects, OrderCancelledEvent } from '@gravitaz/common';
 
-export class OrderDeletedPublisher extends Publisher<OrderDeletedEvent> {
-  readonly subject = Subjects.OrderDeleted;
+export class OrderDeletedPublisher extends Publisher<OrderCancelledEvent> {
+  readonly subject = Subjects.OrderCancelled;
 }

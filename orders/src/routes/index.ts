@@ -1,13 +1,11 @@
 import express, { Request, Response } from 'express';
 import { Order } from '../models/order';
-import { NotFoundError, validateRequest, requireAuth } from '@gravitaz/common';
-import { Types as MongooseTypes } from 'mongoose';
-import { param } from 'express-validator';
+import { requireAuth } from '@gravitaz/common';
 
 const router = express.Router();
 
 router.get('/api/orders', requireAuth, async (req: Request, res: Response) => {
-  let orders = await Order.find();
+  let orders = await Order.find().populate('ticket');
   console.debug('GET all orders');
 
   if (!orders) {

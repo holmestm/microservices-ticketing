@@ -2,7 +2,11 @@ import express, { Request, Response, NextFunction } from 'express';
 import 'express-async-errors';
 import { json } from 'body-parser';
 import cookieSession from 'cookie-session';
-import { errorHandler, NotFoundError, currentUser } from '@gravitaz/common';
+import {
+  errorHandler,
+  RouteNotFoundError,
+  currentUser,
+} from '@gravitaz/common';
 import { createTicketRouter } from './routes/new';
 import { showTicketRouter } from './routes/show';
 import { showAllTicketsRouter } from './routes/index';
@@ -25,7 +29,7 @@ app.use(showTicketRouter);
 app.use(showAllTicketsRouter);
 
 app.use('*', async (req: Request, res: Response) => {
-  throw new NotFoundError(req);
+  throw new RouteNotFoundError(req);
 });
 app.use(errorHandler);
 

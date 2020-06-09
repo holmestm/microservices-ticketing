@@ -15,4 +15,7 @@ it('returns a 200 with array of orders if called and orders exist', async () => 
     .get('/api/orders')
     .set('Cookie', global.signin({ id: userId }));
   expect(response.body.length).toEqual(storedOrders.length);
+  const firstOrder = response.body[0];
+  expect(firstOrder).toHaveProperty('ticket');
+  expect(firstOrder.ticket).toHaveProperty('price');
 });

@@ -1,9 +1,13 @@
 import express, { Request, Response } from 'express';
-import { requireAuth, OrderStatus, InvalidTicketError } from '@gravitaz/common';
+import {
+  requireAuth,
+  ResourceNotFoundError,
+  BadRequestError,
+} from '@gravitaz/common';
 
 import { validateRequest } from '@gravitaz/common';
 import { body } from 'express-validator';
-import { Order } from '../models/order';
+import { Order, OrderStatus } from '../models/order';
 import { OrderCreatedPublisher } from '../events/publishers/order-created-publisher';
 import { natsWrapper } from '../nats-wrapper';
 import { Types as MongooseTypes } from 'mongoose';
@@ -37,12 +41,12 @@ router.post(
     const { ticketId } = req.body;
     const ticket = await Ticket.findById(ticketId);
     if (!ticket) {
-      throw new InvalidTicketError('Ticket not found');
+      throw new ResourceNotFoundError('Ticket not found');
     }
 
     const existingOrder = await ticket.isReserved();
     if (existingOrder) {
-      throw new InvalidTicketError('Ticket already reserved/processed');
+      throw new BadRequestError('Ticket not available');
     }
 
     // Create new order and publish event

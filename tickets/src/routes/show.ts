@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { Ticket } from '../models/ticket';
-import { NotFoundError, validateRequest } from '@gravitaz/common';
+import { ResourceNotFoundError, validateRequest } from '@gravitaz/common';
 import { Types as MongooseTypes } from 'mongoose';
 import { param } from 'express-validator';
 
@@ -16,7 +16,7 @@ router.get(
     const ticket = await Ticket.findById(req.params.id);
     console.debug('GET Ticket by id');
     if (!ticket) {
-      throw new NotFoundError(req);
+      throw new ResourceNotFoundError('ticket not found');
     }
 
     res.send(ticket);

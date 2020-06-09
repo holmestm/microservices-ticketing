@@ -26,4 +26,5 @@ it('returns the order if it is found', async () => {
     .expect(200);
 
   expect(returnedOrder.body).toHaveProperty('ticket');
+  expect(returnedOrder.body.ticket).toHaveProperty('price');
 });

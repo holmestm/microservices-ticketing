@@ -1,6 +1,10 @@
 import express, { Request, Response } from 'express';
 import { Order } from '../models/order';
-import { NotFoundError, validateRequest, requireAuth } from '@gravitaz/common';
+import {
+  ResourceNotFoundError,
+  validateRequest,
+  requireAuth,
+} from '@gravitaz/common';
 import { Types as MongooseTypes } from 'mongoose';
 import { param } from 'express-validator';
 
@@ -14,10 +18,10 @@ router.get(
     .withMessage('Parameter must be a valid MongoDB Identifier'),
   validateRequest,
   async (req: Request, res: Response) => {
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id).populate('ticket');
     console.debug('GET Order by id');
     if (!order) {
-      throw new NotFoundError(req);
+      throw new ResourceNotFoundError('Order not found');
     }
 
     res.send(order);

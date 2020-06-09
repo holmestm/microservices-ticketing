@@ -1,10 +1,11 @@
 import express, { Request, Response } from 'express';
 import { Order } from '../models/order';
 import {
-  NotFoundError,
+  ResourceNotFoundError,
   validateRequest,
   requireAuth,
   NotAuthorizedError,
+  OrderStatus,
 } from '@gravitaz/common';
 import { Types as MongooseTypes } from 'mongoose';
 import { param, body } from 'express-validator';
@@ -32,18 +33,21 @@ router.delete(
   async (req: Request, res: Response) => {
     const order = await Order.findById(req.params.id);
     if (!order) {
-      throw new NotFoundError(req);
+      throw new ResourceNotFoundError('Order not found');
     }
     if (order.userId !== req.currentUser!.id) {
       throw new NotAuthorizedError();
     }
-    await order.remove();
+    order.set({
+      status: OrderStatus.Cancelled,
+    });
+    await order.save();
     getPublisher().publish({
       id: order.id,
       ticketId: order.ticket.id,
     });
 
-    res.send(order);
+    res.status(204).send(order);
   }
 );
 
