@@ -10,7 +10,7 @@ it('returns a 200 with an empty array if called and no orders exist', async () =
 
 it('returns a 200 with array of orders if called and orders exist', async () => {
   const userId = new MongooseTypes.ObjectId().toHexString();
-  const storedOrders = await global.createSampleOrdersForUser(userId);
+  const { storedOrders } = await global.createSampleOrdersForUser(userId);
   const response = await request(app)
     .get('/api/orders')
     .set('Cookie', global.signin({ id: userId }));

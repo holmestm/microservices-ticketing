@@ -10,7 +10,10 @@ declare global {
   namespace NodeJS {
     interface Global {
       signin(user?: Object): string[];
-      createSampleOrdersForUser(userId?: string): Promise<OrderDoc[]>;
+      createSampleOrdersForUser(
+        userId?: string,
+        userId2?: string
+      ): Promise<{ storedOrders: OrderDoc[]; storedTickets: TicketDoc[] }>;
       createSampleTickets(): Promise<TicketDoc[]>;
     }
   }
@@ -83,8 +86,12 @@ global.createSampleTickets = async (): Promise<TicketDoc[]> => {
 
 // creates two orders, one for each of the tickets created above, second is pre-expired
 global.createSampleOrdersForUser = async (
-  userId: string
-): Promise<OrderDoc[]> => {
+  userId: string,
+  userId2: string
+): Promise<{ storedOrders: OrderDoc[]; storedTickets: TicketDoc[] }> => {
+  if (!userId) userId = new MongooseTypes.ObjectId().toHexString();
+  if (!userId2) userId2 = userId;
+
   let orders = await Order.find({});
   expect(orders.length).toEqual(0);
 
@@ -106,7 +113,7 @@ global.createSampleOrdersForUser = async (
       ticket: tickets[1],
       status: OrderStatus.Created,
       expiresAt: addExpiry(new Date(), 15),
-      userId,
+      userId: userId2,
     },
   ];
 
@@ -118,5 +125,5 @@ global.createSampleOrdersForUser = async (
     })
   );
 
-  return storedOrders;
+  return { storedOrders: storedOrders, storedTickets: tickets };
 };

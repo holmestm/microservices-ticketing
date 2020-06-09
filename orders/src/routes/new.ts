@@ -39,9 +39,15 @@ router.post(
     if (!ticket) {
       throw new InvalidTicketError('Ticket not found');
     }
-    const userId = req.currentUser!.id;
+
+    const existingOrder = await ticket.isReserved();
+    if (existingOrder) {
+      throw new InvalidTicketError('Ticket already reserved/processed');
+    }
+
+    // Create new order and publish event
     const order = Order.build({
-      userId,
+      userId: req.currentUser!.id,
       ticket,
       status: OrderStatus.Created,
       expiresAt: addExpiry(new Date(), EXPIRY), // 15 minutes

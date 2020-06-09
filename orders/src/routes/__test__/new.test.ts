@@ -3,6 +3,7 @@ import { app } from '../../app';
 import { Order } from '../../models/order';
 import { natsWrapper } from '../../nats-wrapper';
 import { Subjects, OrderStatus } from '@gravitaz/common';
+import { Types as MongooseTypes } from 'mongoose';
 
 it('has a route handler listening to /api/orders for post requests', async () => {
   const response = await request(app).post('/api/orders').send({});
@@ -43,7 +44,6 @@ it('creates a database entry with valid inputs', async () => {
     .expect(201);
 
   const returnedOrder = response.body;
-  console.log('Returned Order', returnedOrder);
 
   expect(returnedOrder.ticket.id).toEqual(sampleTickets[0].id);
   expect(returnedOrder.status).toEqual(OrderStatus.Created);
@@ -64,4 +64,14 @@ it('publishes an event', async () => {
     expect.any(String),
     expect.any(Function)
   );
+});
+
+it('Returns an error if we try to reserve a ticket that is already reserved', async () => {
+  const { storedTickets } = await global.createSampleOrdersForUser();
+
+  let response = await request(app)
+    .post('/api/orders')
+    .set('Cookie', global.signin())
+    .send({ ticketId: storedTickets[0].id })
+    .expect(400);
 });

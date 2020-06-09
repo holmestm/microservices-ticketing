@@ -19,7 +19,7 @@ it('returns a 404 if order is not found with a valid id', async () => {
 
 it('returns the order if it is found', async () => {
   const userId = new MongooseTypes.ObjectId().toHexString();
-  const storedOrders = await global.createSampleOrdersForUser(userId);
+  const { storedOrders } = await global.createSampleOrdersForUser(userId);
   const returnedOrder = await request(app)
     .get(`/api/orders/${storedOrders[0].id}`)
     .set('Cookie', global.signin({ id: userId }))

@@ -10,7 +10,6 @@ it('returns a 400 if id format is invalid', async () => {
     .delete('/api/orders/123')
     .set('Cookie', global.signin())
     .expect(400);
-  console.log(response.body);
 });
 
 it('returns a 404 if order is not found with a valid id', async () => {
@@ -23,13 +22,13 @@ it('returns a 404 if order is not found with a valid id', async () => {
 
 it('returns an 401 if the user is not authenticated', async () => {
   const userId = new MongooseTypes.ObjectId().toHexString();
-  const storedOrders = await global.createSampleOrdersForUser(userId);
+  const { storedOrders } = await global.createSampleOrdersForUser(userId);
   await request(app).delete(`/api/orders/${storedOrders[0].id}`).expect(401);
 });
 
 it('returns an 401 if the user doesnt own the order', async () => {
   const userId = new MongooseTypes.ObjectId().toHexString();
-  const storedOrders = await global.createSampleOrdersForUser(userId);
+  const { storedOrders } = await global.createSampleOrdersForUser(userId);
   const response = await request(app)
     .delete(`/api/orders/${storedOrders[0].id}`)
     .set('Cookie', global.signin());
@@ -39,7 +38,7 @@ it('returns an 401 if the user doesnt own the order', async () => {
 
 it('returns a 200 with valid inputs', async () => {
   const userId = new MongooseTypes.ObjectId().toHexString();
-  const storedOrders = await global.createSampleOrdersForUser(userId);
+  const { storedOrders } = await global.createSampleOrdersForUser(userId);
   await request(app)
     .delete(`/api/orders/${storedOrders[0].id}`)
     .set('Cookie', global.signin({ id: userId }))
@@ -48,7 +47,7 @@ it('returns a 200 with valid inputs', async () => {
 
 it('actually deletes an order from the database', async () => {
   const userId = new MongooseTypes.ObjectId().toHexString();
-  const storedOrders = await global.createSampleOrdersForUser(userId);
+  const { storedOrders } = await global.createSampleOrdersForUser(userId);
   await request(app)
     .delete(`/api/orders/${storedOrders[0].id}`)
     .set('Cookie', global.signin({ id: userId }))
@@ -60,7 +59,7 @@ it('actually deletes an order from the database', async () => {
 
 it('publishes an event', async () => {
   const userId = new MongooseTypes.ObjectId().toHexString();
-  const storedOrders = await global.createSampleOrdersForUser(userId);
+  const { storedOrders } = await global.createSampleOrdersForUser(userId);
   await request(app)
     .delete(`/api/orders/${storedOrders[0].id}`)
     .set('Cookie', global.signin({ id: userId }))
