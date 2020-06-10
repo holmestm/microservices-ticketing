@@ -61,7 +61,12 @@ router.post(
     await getPublisher().publish({
       id: order.id,
       userId: order.userId,
-      ticketId: ticket.id,
+      status: order.status,
+      expiresAt: order.expiresAt.toISOString(),
+      ticket: {
+        id: order.ticket.id,
+        price: order.ticket.price,
+      },
     });
 
     res.status(201).send(order);

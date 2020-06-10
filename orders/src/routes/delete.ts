@@ -9,13 +9,13 @@ import {
 } from '@gravitaz/common';
 import { Types as MongooseTypes } from 'mongoose';
 import { param, body } from 'express-validator';
-import { OrderDeletedPublisher } from '../events/publishers/order-deleted-publisher';
+import { OrderCancelledPublisher } from '../events/publishers/order-cancelled-publisher';
 import { natsWrapper } from '../nats-wrapper';
 
-let publisher: OrderDeletedPublisher;
+let publisher: OrderCancelledPublisher;
 
-let getPublisher = (): OrderDeletedPublisher => {
-  if (!publisher) publisher = new OrderDeletedPublisher(natsWrapper.client);
+let getPublisher = (): OrderCancelledPublisher => {
+  if (!publisher) publisher = new OrderCancelledPublisher(natsWrapper.client);
   return publisher;
 };
 
@@ -44,7 +44,7 @@ router.delete(
     await order.save();
     getPublisher().publish({
       id: order.id,
-      ticketId: order.ticket.id,
+      ticket: { id: order.ticket.id },
     });
 
     res.status(204).send(order);
