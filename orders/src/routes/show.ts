@@ -4,6 +4,7 @@ import {
   ResourceNotFoundError,
   validateRequest,
   requireAuth,
+  NotAuthorizedError,
 } from '@gravitaz/common';
 import { Types as MongooseTypes } from 'mongoose';
 import { param } from 'express-validator';
@@ -11,19 +12,17 @@ import { param } from 'express-validator';
 const router = express.Router();
 
 router.get(
-  '/api/orders/:id',
+  '/api/orders/:orderId',
   requireAuth,
-  param('id')
-    .custom((idValue) => MongooseTypes.ObjectId.isValid(idValue))
-    .withMessage('Parameter must be a valid MongoDB Identifier'),
-  validateRequest,
   async (req: Request, res: Response) => {
-    const order = await Order.findById(req.params.id).populate('ticket');
-    console.debug('GET Order by id');
+    const order = await Order.findById(req.params.orderId).populate('ticket');
+    console.log('Showing', order);
     if (!order) {
-      throw new ResourceNotFoundError('Order not found');
+      throw new ResourceNotFoundError('Invalid Order');
     }
-
+    if (order.userId !== req.currentUser!.id) {
+      throw new NotAuthorizedError();
+    }
     res.send(order);
   }
 );

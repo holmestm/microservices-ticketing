@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: orders-depl
 spec:
-  replicas: 4
+  replicas: 1
   selector:
     matchLabels:
       app: orders
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: orders
-          image: holmestm/orders
+          image: eu.gcr.io/ticketing-dev-277912/orders
           env:
             - name: NATS_CLIENT_ID
               valueFrom:

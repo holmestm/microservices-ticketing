@@ -52,6 +52,7 @@ router.put(
     await ticket.save();
     getPublisher().publish({
       id: ticket.id,
+      version: ticket.version,
       price: ticket.price,
       title: ticket.title,
       userId: ticket.userId,

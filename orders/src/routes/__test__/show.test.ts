@@ -1,30 +1,62 @@
 import request from 'supertest';
 import { app } from '../../app';
-import { Types as MongooseTypes } from 'mongoose';
+import { Ticket } from '../../models/ticket';
+import { Order } from '../../models/order';
 
-it('returns a 400 if id format is invalid', async () => {
-  await request(app)
-    .get('/api/orders/123')
-    .set('Cookie', global.signin())
-    .expect(400);
-});
+it('fetches the order', async (done) => {
+  // Create a ticket
+  const ticket = Ticket.build({
+    title: 'concert',
+    price: 20,
+    id: '',
+  });
+  await ticket.save();
 
-it('returns a 404 if order is not found with a valid id', async () => {
-  const id = new MongooseTypes.ObjectId().toHexString();
-  await request(app)
-    .get(`/api/orders/${id}`)
-    .set('Cookie', global.signin())
-    .expect(404);
-});
+  const user = global.signin();
+  // make a request to build an order with this ticket
+  const { body: order } = await request(app)
+    .post('/api/orders')
+    .set('Cookie', user)
+    .send({ ticketId: ticket.id })
+    .expect(201);
 
-it('returns the order if it is found', async () => {
-  const userId = new MongooseTypes.ObjectId().toHexString();
-  const { storedOrders } = await global.createSampleOrdersForUser(userId);
-  const returnedOrder = await request(app)
-    .get(`/api/orders/${storedOrders[0].id}`)
-    .set('Cookie', global.signin({ id: userId }))
+  console.log('Created', order);
+  //  const orders = await Order.find();
+  //  console.log('Index: All orders', orders);
+
+  // make request to fetch the order
+  const { body: fetchedOrder } = await request(app)
+    .get(`/api/orders/${order.id}`)
+    .set('Cookie', user)
+    .send()
     .expect(200);
 
-  expect(returnedOrder.body).toHaveProperty('ticket');
-  expect(returnedOrder.body.ticket).toHaveProperty('price');
+  expect(fetchedOrder.id).toEqual(order.id);
+
+  return done();
+});
+
+it('returns an error if one user tries to fetch another users order', async () => {
+  // Create a ticket
+  const ticket = Ticket.build({
+    title: 'concert',
+    price: 20,
+    id: '',
+  });
+  await ticket.save();
+
+  const user = global.signin();
+  // make a request to build an order with this ticket
+  const { body: order } = await request(app)
+    .post('/api/orders')
+    .set('Cookie', user)
+    .send({ ticketId: ticket.id })
+    .expect(201);
+
+  // make request to fetch the order
+  await request(app)
+    .get(`/api/orders/${order.id}`)
+    .set('Cookie', global.signin())
+    .send()
+    .expect(401);
 });

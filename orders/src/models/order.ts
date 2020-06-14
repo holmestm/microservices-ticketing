@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { OrderStatus } from '@gravitaz/common';
 import { TicketDoc } from './ticket';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
 // an interface that describes the properties that are required to create a new Order
 interface OrderAttrs {
@@ -24,9 +25,10 @@ interface OrderDoc extends mongoose.Document {
   status: OrderStatus;
   expiresAt: Date;
   userId: string;
+  version: number;
 }
 
-const OrderSchema = new mongoose.Schema(
+const orderSchema = new mongoose.Schema(
   {
     ticket: {
       type: mongoose.Schema.Types.ObjectId,
@@ -56,11 +58,13 @@ const OrderSchema = new mongoose.Schema(
     },
   }
 );
+orderSchema.set('versionKey', 'version');
+orderSchema.plugin(updateIfCurrentPlugin);
 
-OrderSchema.statics.build = (attrs: OrderAttrs) => {
+orderSchema.statics.build = (attrs: OrderAttrs) => {
   return new Order(attrs);
 };
 
-const Order = mongoose.model<OrderDoc, OrderModel>('Order', OrderSchema);
+const Order = mongoose.model<OrderDoc, OrderModel>('Order', orderSchema);
 
 export { Order, OrderDoc, OrderAttrs, OrderStatus };

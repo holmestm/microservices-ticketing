@@ -1,74 +1,61 @@
 import request from 'supertest';
 import { app } from '../../app';
+import { Ticket } from '../../models/ticket';
 import { Order, OrderStatus } from '../../models/order';
-import { Types as MongooseTypes } from 'mongoose';
 import { natsWrapper } from '../../nats-wrapper';
-import { Subjects } from '@gravitaz/common';
 
-it('returns a 400 if id format is invalid', async () => {
-  const response = await request(app)
-    .delete('/api/orders/123')
-    .set('Cookie', global.signin())
-    .expect(400);
-});
+it('marks an order as cancelled', async () => {
+  // create a ticket with Ticket Model
+  const ticket = Ticket.build({
+    title: 'concert',
+    price: 20,
+    id: '5ee554b8d356c300185220e4',
+  });
+  await ticket.save();
 
-it('returns a 404 if order is not found with a valid id', async () => {
-  const id = new MongooseTypes.ObjectId().toHexString();
-  let response = await request(app)
-    .delete(`/api/orders/${id}`)
-    .set('Cookie', global.signin());
-  expect(response.status).toEqual(404);
-});
+  const user = global.signin();
+  // make a request to create an order
+  const { body: order } = await request(app)
+    .post('/api/orders')
+    .set('Cookie', user)
+    .send({ ticketId: ticket.id })
+    .expect(201);
 
-it('returns an 401 if the user is not authenticated', async () => {
-  const userId = new MongooseTypes.ObjectId().toHexString();
-  const { storedOrders } = await global.createSampleOrdersForUser(userId);
-  await request(app).delete(`/api/orders/${storedOrders[0].id}`).expect(401);
-});
-
-it('returns an 401 if the user doesnt own the order', async () => {
-  const userId = new MongooseTypes.ObjectId().toHexString();
-  const { storedOrders } = await global.createSampleOrdersForUser(userId);
-  const response = await request(app)
-    .delete(`/api/orders/${storedOrders[0].id}`)
-    .set('Cookie', global.signin());
-
-  expect(response.status).toEqual(401);
-});
-
-it('returns a 200 with valid inputs', async () => {
-  const userId = new MongooseTypes.ObjectId().toHexString();
-  const { storedOrders } = await global.createSampleOrdersForUser(userId);
+  // make a request to cancel the order
   await request(app)
-    .delete(`/api/orders/${storedOrders[0].id}`)
-    .set('Cookie', global.signin({ id: userId }))
-    .expect(204);
-});
-
-it("doesn't actually deletes an order from the database but updates it's status", async () => {
-  const userId = new MongooseTypes.ObjectId().toHexString();
-  const { storedOrders } = await global.createSampleOrdersForUser(userId);
-  await request(app)
-    .delete(`/api/orders/${storedOrders[0].id}`)
-    .set('Cookie', global.signin({ id: userId }))
+    .delete(`/api/orders/${order.id}`)
+    .set('Cookie', user)
+    .send()
     .expect(204);
 
-  const order = await Order.findById(storedOrders[0].id);
-  expect(order).not.toBeNull();
-  expect(order?.status).toBe(OrderStatus.Cancelled);
+  // expectation to make sure the thing is cancelled
+  const updatedOrder = await Order.findById(order.id);
+
+  expect(updatedOrder!.status).toEqual(OrderStatus.Cancelled);
 });
 
-it('publishes an event', async () => {
-  const userId = new MongooseTypes.ObjectId().toHexString();
-  const { storedOrders } = await global.createSampleOrdersForUser(userId);
+it('emits a order cancelled event', async () => {
+  const ticket = Ticket.build({
+    title: 'concert',
+    price: 20,
+    id: '5ee554b8d356c300185220e4',
+  });
+  await ticket.save();
+
+  const user = global.signin();
+  // make a request to create an order
+  const { body: order } = await request(app)
+    .post('/api/orders')
+    .set('Cookie', user)
+    .send({ ticketId: ticket.id })
+    .expect(201);
+
+  // make a request to cancel the order
   await request(app)
-    .delete(`/api/orders/${storedOrders[0].id}`)
-    .set('Cookie', global.signin({ id: userId }))
+    .delete(`/api/orders/${order.id}`)
+    .set('Cookie', user)
+    .send()
     .expect(204);
 
-  expect(natsWrapper.client.publish).toHaveBeenCalledWith(
-    Subjects.OrderCancelled,
-    expect.any(String),
-    expect.any(Function)
-  );
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

@@ -1,16 +1,17 @@
 import express, { Request, Response } from 'express';
 import { Order } from '../models/order';
-import { requireAuth } from '@gravitaz/common';
+import {
+  requireAuth,
+  ResourceNotFoundError,
+  NotAuthorizedError,
+} from '@gravitaz/common';
 
 const router = express.Router();
 
 router.get('/api/orders', requireAuth, async (req: Request, res: Response) => {
-  let orders = await Order.find().populate('ticket');
-  console.debug('GET all orders');
-
-  if (!orders) {
-    orders = [];
-  }
+  const orders = await Order.find({
+    userId: req.currentUser!.id,
+  }).populate('ticket');
 
   res.send(orders);
 });

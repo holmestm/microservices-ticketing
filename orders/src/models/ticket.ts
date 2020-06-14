@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import { Order, OrderStatus } from './order';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
+
 // This is the Orders service collection of Ticket data
 
 // an interface that describes the properties that are required to create a new Ticket
@@ -22,10 +24,11 @@ interface TicketModel extends mongoose.Model<TicketDoc> {
 interface TicketDoc extends mongoose.Document {
   title: string;
   price: number;
+  version: number;
   isReserved(): Promise<boolean>;
 }
 
-const TicketSchema = new mongoose.Schema(
+const ticketSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -46,16 +49,19 @@ const TicketSchema = new mongoose.Schema(
     },
   }
 );
+ticketSchema.set('versionKey', 'version');
+ticketSchema.plugin(updateIfCurrentPlugin);
 
-TicketSchema.statics.build = (attrs: TicketAttrs) => {
+ticketSchema.statics.build = (attrs: TicketAttrs) => {
   let a: any = attrs;
   if (a.id) {
-    delete a.id;
     a['_id'] = attrs.id;
+    delete a.id;
   }
+  console.log('Adding new ticket replica', a);
   return new Ticket(a);
 };
-TicketSchema.methods.isReserved = async function () {
+ticketSchema.methods.isReserved = async function () {
   const existingOrder = await Order.findOne({
     ticket: this,
     status: {
@@ -70,6 +76,6 @@ TicketSchema.methods.isReserved = async function () {
   return !!existingOrder;
 };
 
-const Ticket = mongoose.model<TicketDoc, TicketModel>('Ticket', TicketSchema);
+const Ticket = mongoose.model<TicketDoc, TicketModel>('Ticket', ticketSchema);
 
 export { Ticket, TicketDoc, TicketAttrs };

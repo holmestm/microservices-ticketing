@@ -1,21 +1,59 @@
 import request from 'supertest';
 import { app } from '../../app';
 import { Order } from '../../models/order';
-import { Types as MongooseTypes } from 'mongoose';
+import { Ticket } from '../../models/ticket';
 
-it('returns a 200 with an empty array if called and no orders exist', async () => {
-  await request(app).get('/api/orders').set('Cookie', global.signin());
-  expect(200);
-});
+const buildTicket = async () => {
+  const ticket = Ticket.build({
+    title: 'concert',
+    price: 20,
+    id: '',
+  });
+  await ticket.save();
 
-it('returns a 200 with array of orders if called and orders exist', async () => {
-  const userId = new MongooseTypes.ObjectId().toHexString();
-  const { storedOrders } = await global.createSampleOrdersForUser(userId);
+  return ticket;
+};
+
+it('fetches orders for a particular user', async () => {
+  // Create three tickets
+  const ticketOne = await buildTicket();
+  const ticketTwo = await buildTicket();
+  const ticketThree = await buildTicket();
+
+  const userOne = global.signin();
+  const userTwo = global.signin();
+  // Create one order as User #1
+  await request(app)
+    .post('/api/orders')
+    .set('Cookie', userOne)
+    .send({ ticketId: ticketOne.id })
+    .expect(201);
+
+  // Create two orders as User #2
+  const { body: orderOne } = await request(app)
+    .post('/api/orders')
+    .set('Cookie', userTwo)
+    .send({ ticketId: ticketTwo.id })
+    .expect(201);
+  const { body: orderTwo } = await request(app)
+    .post('/api/orders')
+    .set('Cookie', userTwo)
+    .send({ ticketId: ticketThree.id })
+    .expect(201);
+
+  // Make request to get orders for User #2
   const response = await request(app)
     .get('/api/orders')
-    .set('Cookie', global.signin({ id: userId }));
-  expect(response.body.length).toEqual(storedOrders.length);
-  const firstOrder = response.body[0];
-  expect(firstOrder).toHaveProperty('ticket');
-  expect(firstOrder.ticket).toHaveProperty('price');
+    .set('Cookie', userTwo)
+    .expect(200);
+
+  const orders = await Order.find();
+  console.log('Index: All orders', orders);
+
+  // Make sure we only got the orders for User #2
+  expect(response.body.length).toEqual(2);
+  expect(response.body[0].id).toEqual(orderOne.id);
+  expect(response.body[1].id).toEqual(orderTwo.id);
+  expect(response.body[0].ticket.id).toEqual(ticketTwo.id);
+  expect(response.body[1].ticket.id).toEqual(ticketThree.id);
 });
