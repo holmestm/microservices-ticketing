@@ -14,7 +14,6 @@ router.get(
   validateRequest,
   async (req: Request, res: Response) => {
     const ticket = await Ticket.findById(req.params.id);
-    console.debug('GET Ticket by id');
     if (!ticket) {
       throw new ResourceNotFoundError('ticket not found');
     }

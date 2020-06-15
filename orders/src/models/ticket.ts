@@ -50,15 +50,26 @@ const ticketSchema = new mongoose.Schema(
   }
 );
 ticketSchema.set('versionKey', 'version');
+// comment out to do version control ourselves
 ticketSchema.plugin(updateIfCurrentPlugin);
 
+/*
+// manual version control
+ticketSchema.pre('save', function (done) {
+  // @ts-ignore
+  this.$where = {
+    version: this.get('version') - 1,
+  };
+
+  done();
+});
+*/
 ticketSchema.statics.build = (attrs: TicketAttrs) => {
   let a: any = attrs;
   if (a.id) {
     a['_id'] = attrs.id;
     delete a.id;
   }
-  console.log('Adding new ticket replica', a);
   return new Ticket(a);
 };
 ticketSchema.methods.isReserved = async function () {

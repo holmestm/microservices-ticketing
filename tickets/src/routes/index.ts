@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.get('/api/tickets', async (req: Request, res: Response) => {
   let tickets = await Ticket.find();
-  console.debug('GET all tickets');
 
   if (!tickets) {
     tickets = [];

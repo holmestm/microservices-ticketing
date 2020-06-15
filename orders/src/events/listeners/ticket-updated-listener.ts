@@ -21,9 +21,11 @@ export class TicketUpdatedListener extends Listener<TicketUpdatedEvent> {
       version: version - 1,
     });
     if (!ticket) {
-      throw new ResourceNotFoundError(`Invalid ticket ${id} in event`);
+      throw new ResourceNotFoundError(
+        `Invalid ticket ${id} with version ${version} in event`
+      );
     }
-    ticket.set({ ticket, price });
+    ticket.set({ title, price });
     await ticket.save();
     msg.ack();
   }

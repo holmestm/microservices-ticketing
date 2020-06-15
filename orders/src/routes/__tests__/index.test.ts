@@ -48,7 +48,6 @@ it('fetches orders for a particular user', async () => {
     .expect(200);
 
   const orders = await Order.find();
-  console.log('Index: All orders', orders);
 
   // Make sure we only got the orders for User #2
   expect(response.body.length).toEqual(2);

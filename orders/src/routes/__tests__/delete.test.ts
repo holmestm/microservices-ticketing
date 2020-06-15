@@ -9,7 +9,7 @@ it('marks an order as cancelled', async () => {
   const ticket = Ticket.build({
     title: 'concert',
     price: 20,
-    id: '5ee554b8d356c300185220e4',
+    id: '',
   });
   await ticket.save();
 

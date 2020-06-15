@@ -20,7 +20,6 @@ it('fetches the order', async (done) => {
     .send({ ticketId: ticket.id })
     .expect(201);
 
-  console.log('Created', order);
   //  const orders = await Order.find();
   //  console.log('Index: All orders', orders);
 
