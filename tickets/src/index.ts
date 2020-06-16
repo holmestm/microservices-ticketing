@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import { natsWrapper } from './nats-wrapper';
 import { app } from './app';
+import { OrderCreatedListener } from './events/listeners/order-created-listener';
+import { OrderCancelledListener } from './events/listeners/order-cancelled-listener';
 
 const start = async () => {
   const envvars = [
@@ -24,15 +26,18 @@ const start = async () => {
     NATS_CLUSTER_ID,
   } = process.env;
   try {
-    console.log('Connecting to NATS')
+    console.log('Connecting to NATS');
     await natsWrapper.connect(NATS_CLUSTER_ID!, NATS_CLIENT_ID!, NATS_URL!);
-    console.log('Connected to NATS')
+    console.log('Connected to NATS');
     natsWrapper.client.on('close', () => {
       console.log('NATS connection closed');
       process.exit();
     });
     process.on('SIGINT', () => natsWrapper.client.close());
     process.on('SIGTERM', () => natsWrapper.client.close());
+
+    new OrderCreatedListener(natsWrapper.client).listen();
+    new OrderCancelledListener(natsWrapper.client).listen();
 
     console.log('Connecting to MongoDB');
     await mongoose.connect(MONGO_URI!, {

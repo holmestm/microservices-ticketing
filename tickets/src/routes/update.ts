@@ -5,6 +5,7 @@ import {
   validateRequest,
   requireAuth,
   NotAuthorizedError,
+  BadRequestError,
 } from '@gravitaz/common';
 import { Types as MongooseTypes } from 'mongoose';
 import { param, body } from 'express-validator';
@@ -44,6 +45,9 @@ router.put(
     }
     if (ticket.userId !== req.currentUser!.id) {
       throw new NotAuthorizedError();
+    }
+    if (ticket.orderId) {
+      throw new BadRequestError('Ticket is reserved');
     }
     ticket.set({
       title: req.body.title,
