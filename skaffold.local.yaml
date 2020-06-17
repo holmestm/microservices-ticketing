@@ -7,7 +7,7 @@ deploy:
       - ./infra/local/*.yaml
 build:
   local:
-    push: true
+    push: false
   artifacts:
     - image: holmestm/auth
       context: auth
@@ -19,6 +19,14 @@ build:
             dest: .
     - image: holmestm/tickets
       context: tickets
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: holmestm/payments
+      context: payments
       docker:
         dockerfile: Dockerfile
       sync:
