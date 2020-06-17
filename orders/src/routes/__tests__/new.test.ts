@@ -68,3 +68,24 @@ it('emits an order created event', async () => {
 
   expect(natsWrapper.client.publish).toHaveBeenCalled();
 });
+
+it('a reserved ticket cannot be ordered', async () => {
+  const ticket = Ticket.build({
+    title: 'concert',
+    price: 20,
+    id: '5ee554b8d356c300185220e4',
+  });
+  await ticket.save();
+
+  await request(app)
+    .post('/api/orders')
+    .set('Cookie', global.signin())
+    .send({ ticketId: ticket.id })
+    .expect(201);
+
+  await request(app)
+    .post('/api/orders')
+    .set('Cookie', global.signin())
+    .send({ ticketId: ticket.id })
+    .expect(400);
+});

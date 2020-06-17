@@ -16,7 +16,7 @@ import { Ticket } from '../models/ticket';
 const router = express.Router();
 let publisher: OrderCreatedPublisher;
 
-const EXPIRY = 15;
+const EXPIRATION_WINDOW_SECONDS = 60;
 
 let getPublisher = (): OrderCreatedPublisher => {
   if (!publisher) publisher = new OrderCreatedPublisher(natsWrapper.client);
@@ -48,13 +48,16 @@ router.post(
     if (existingOrder) {
       throw new BadRequestError('Ticket not available');
     }
+    // Calculate an expiration date for this order
+    const expiration = new Date();
+    expiration.setSeconds(expiration.getSeconds() + EXPIRATION_WINDOW_SECONDS);
 
     // Create new order and publish event
     const order = Order.build({
       userId: req.currentUser!.id,
       ticket,
       status: OrderStatus.Created,
-      expiresAt: addExpiry(new Date(), EXPIRY), // 15 minutes
+      expiresAt: expiration,
     });
     await order.save();
 

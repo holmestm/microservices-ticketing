@@ -59,3 +59,33 @@ it('emits a order cancelled event', async () => {
 
   expect(natsWrapper.client.publish).toHaveBeenCalled();
 });
+
+it('a cancelled ticket can be re-ordered', async () => {
+  const ticket = Ticket.build({
+    title: 'concert',
+    price: 20,
+    id: '',
+  });
+  await ticket.save();
+
+  const user = global.signin();
+  // make a request to create an order
+  const { body: order } = await request(app)
+    .post('/api/orders')
+    .set('Cookie', user)
+    .send({ ticketId: ticket.id })
+    .expect(201);
+
+  // make a request to cancel the order
+  await request(app)
+    .delete(`/api/orders/${order.id}`)
+    .set('Cookie', user)
+    .send()
+    .expect(204);
+
+  await request(app)
+    .post('/api/orders')
+    .set('Cookie', global.signin())
+    .send({ ticketId: ticket.id })
+    .expect(201);
+});
