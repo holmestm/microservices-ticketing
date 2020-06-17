@@ -14,6 +14,7 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
     data: OrderCreatedEvent['data'],
     msg: Message
   ): Promise<void> {
+    console.log(`Order created event received by Tickets Service`);
     const ticket = await Ticket.findById(data.ticket.id);
     if (!ticket) {
       throw new Error('Ticket not found');
@@ -23,7 +24,15 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
 
     await ticket.save();
 
-    await this.getPublisher().publish(ticket.toJSON());
+    const { id, version, title, price, userId, orderId } = ticket;
+    await this.getPublisher().publish({
+      id,
+      version,
+      title,
+      price,
+      userId,
+      orderId,
+    });
 
     msg.ack();
   }

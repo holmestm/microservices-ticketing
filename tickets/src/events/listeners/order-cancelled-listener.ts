@@ -11,6 +11,8 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
     msg: Message
   ): Promise<void> {
     const ticket = await Ticket.findById(data.ticket.id);
+    console.log('Resolved ticket');
+
     if (!ticket) {
       throw new Error('Ticket not found');
     }
@@ -19,7 +21,16 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
 
     await ticket.save();
 
-    await this.getPublisher().publish(ticket.toJSON());
+    const { id, version, title, price, userId, orderId } = ticket;
+
+    await this.getPublisher().publish({
+      id,
+      version,
+      title,
+      price,
+      userId,
+      orderId,
+    });
 
     msg.ack();
   }
