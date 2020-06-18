@@ -12,7 +12,7 @@ Brief notes for me.
 - Microk8s - issue with ingress-nginx on old CPUs so using minikube, ran with local registry following guidelines on Ubuntu site
 - Docker Desktop on MacOS after running installation as per https://kubernetes.github.io/ingress-nginx/deploy/ I then followed this else got error:
 
-macbookface:k8s tim$ kubectl apply -f ingress-srv.yaml 
+macbookface:k8s tim\$ kubectl apply -f ingress-srv.yaml
 Error from server (InternalError): error when creating "ingress-srv.yaml": Internal error occurred: failed calling webhook "validate.nginx.ingress.kubernetes.io": Post https://ingress-nginx-controller-admission.ingress-nginx.svc:443/extensions/v1beta1/ingresses?timeout=30s: dial tcp 10.111.134.109:443: connect: connection refused
 
 ---
@@ -29,6 +29,7 @@ https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-con
 
 From
 https://stackoverflow.com/questions/61365202/nginx-ingress-service-ingress-nginx-controller-admission-not-found
+
 # My Setup
 
 - Server - Ubuntu 20.04 running Minikube v1.10.1, local ip 192.168.0.56, minikube ip 172.17.0.2
@@ -50,6 +51,8 @@ https://stackoverflow.com/questions/61365202/nginx-ingress-service-ingress-nginx
 - Secrets
 - kubectl create secret tls ticketing.dev --key ticketing.dev.key --cert ticketing.dev.crt
 - kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf
+- kubectl create secret generic stripe-secret --from-literal STRIPE_KEY=sk_test_Cc7ooi\***\*\*\*\*\*\***
+- NOTE - secrets exported to my ~/.kube/ticketing-secrets.yaml but not in Git!
 - TODO: document how to create the TLS certs (ticketing.dev.key/crt)
 - to access client on Chrome need to type 'thisisunsafe' to get past the self-signed certificate issue
 

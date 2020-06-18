@@ -1,11 +1,14 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, query } from 'express';
 import { Ticket } from '../models/ticket';
 
 const router = express.Router();
 
 router.get('/api/tickets', async (req: Request, res: Response) => {
-  let tickets = await Ticket.find();
-
+  let where: any = {};
+  if (req.query?.all && req.query.all === 'N') {
+    where = { orderId: { $exists: false } };
+  }
+  let tickets = await Ticket.find(where);
   if (!tickets) {
     tickets = [];
   }

@@ -18,13 +18,7 @@ const start = async () => {
     }
     console.log(`${v} = ${process.env[v]}`);
   });
-  const {
-    JWT_KEY,
-    MONGO_URI,
-    NATS_CLIENT_ID,
-    NATS_URL,
-    NATS_CLUSTER_ID,
-  } = process.env;
+  const { MONGO_URI, NATS_CLIENT_ID, NATS_URL, NATS_CLUSTER_ID } = process.env;
   try {
     console.log('Connecting to NATS');
     await natsWrapper.connect(NATS_CLUSTER_ID!, NATS_CLIENT_ID!, NATS_URL!);

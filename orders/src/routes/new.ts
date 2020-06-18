@@ -13,11 +13,11 @@ import { natsWrapper } from '../nats-wrapper';
 import { Types as MongooseTypes } from 'mongoose';
 import { Ticket } from '../models/ticket';
 
+const EXPIRATION_WINDOW_SECONDS = 60 * 3; // 3 minutes
+
 const router = express.Router();
+
 let publisher: OrderCreatedPublisher;
-
-const EXPIRATION_WINDOW_SECONDS = 60;
-
 let getPublisher = (): OrderCreatedPublisher => {
   if (!publisher) publisher = new OrderCreatedPublisher(natsWrapper.client);
   return publisher;

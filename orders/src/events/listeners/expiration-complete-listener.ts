@@ -14,6 +14,12 @@ export class ExpirationCompleteListener extends Listener<
   ): Promise<void> {
     const { orderId } = data;
     await cancelOrder(orderId);
-    msg.ack();
+    try {
+      msg.ack();
+    } catch (err) {
+      console.log('Unable to acknowledge message', msg);
+      console.log('Message subject', msg && msg.getSubject());
+      console.error(err);
+    }
   }
 }
