@@ -4,6 +4,9 @@ import { Order } from '../../models/orders';
 import { natsWrapper } from '../../nats-wrapper';
 import { Subjects, OrderStatus } from '@gravitaz/common';
 import { Types as MongooseTypes } from 'mongoose';
+import { stripe } from '../../stripe';
+
+jest.mock('../../stripe');
 
 it('has a route handler listening to /api/orders for post requests', async () => {
   const response = await request(app).post('/api/payments').send({});
@@ -84,12 +87,13 @@ it('Returns an error if the order is owned by a different user', async () => {
     .expect(401);
 });
 
-it('Returns success if the order is created, user is same and inputs OK', async () => {
+it('returns a 201 with valid inputs and creates a valid stripe charge with mock', async () => {
   const orderId = new MongooseTypes.ObjectId().toHexString();
   const user = {
     id: new MongooseTypes.ObjectId().toHexString(),
     email: 'test@test.com',
   };
+  const price = Math.floor(Math.random() * 100000);
 
   // create a fake order
   const order = Order.build({
@@ -97,13 +101,18 @@ it('Returns success if the order is created, user is same and inputs OK', async 
     version: 0,
     status: OrderStatus.Created,
     userId: user.id,
-    price: 100,
+    price: price,
   });
   await order.save();
 
   await request(app)
     .post('/api/payments')
     .set('Cookie', global.signin(user))
-    .send({ orderId: orderId, token: 'ABC' })
+    .send({ orderId: orderId, token: 'tok_visa' })
     .expect(201);
+
+  const chargeOptions = (stripe.charges.create as jest.Mock).mock.calls[0][0];
+  expect(chargeOptions.source).toEqual('tok_visa');
+  expect(chargeOptions.amount).toEqual(order.price * 100);
+  expect(chargeOptions.currency).toEqual('gbp');
 });

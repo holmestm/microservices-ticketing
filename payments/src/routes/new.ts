@@ -11,6 +11,7 @@ import { body } from 'express-validator';
 import { Order, OrderStatus } from '../models/orders';
 import { natsWrapper } from '../nats-wrapper';
 import { Types as MongooseTypes } from 'mongoose';
+import { stripe } from '../stripe';
 
 const router = express.Router();
 
@@ -36,6 +37,12 @@ router.post(
     if (order.status === OrderStatus.Cancelled) {
       throw new BadRequestError('Order cancelled');
     }
+
+    const response = await stripe.charges.create({
+      amount: order.price * 100,
+      currency: 'gbp',
+      source: token,
+    });
 
     res.status(201).send({ success: true });
   }
