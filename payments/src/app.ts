@@ -7,6 +7,7 @@ import {
   RouteNotFoundError,
   currentUser,
 } from '@gravitaz/common';
+import { createChargeRouter } from './routes/new';
 
 const app = express();
 app.set('trust proxy', true);
@@ -18,6 +19,8 @@ app.use(
   })
 );
 app.use(currentUser);
+
+app.use(createChargeRouter);
 
 app.use('*', async (req: Request, res: Response) => {
   throw new RouteNotFoundError(req);
