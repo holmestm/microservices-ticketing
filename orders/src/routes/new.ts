@@ -13,7 +13,7 @@ import { natsWrapper } from '../nats-wrapper';
 import { Types as MongooseTypes } from 'mongoose';
 import { Ticket } from '../models/ticket';
 
-const EXPIRATION_WINDOW_SECONDS = 60 * 3; // 3 minutes
+const EXPIRATION_WINDOW_SECONDS = 60 * 5; // 3 minutes
 
 const router = express.Router();
 
@@ -46,7 +46,7 @@ router.post(
 
     const existingOrder = await ticket.isReserved();
     if (existingOrder) {
-      throw new BadRequestError('Ticket not available');
+      throw new BadRequestError('Sorry this ticket is reserved');
     }
     // Calculate an expiration date for this order
     const expiration = new Date();

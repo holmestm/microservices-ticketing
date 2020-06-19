@@ -1,9 +1,13 @@
+// this defines the common header shown on every page
+
 import Link from 'next/link';
 
 export default ({ currentUser }) => {
   const links = [
     !currentUser && { label: 'Sign Up', href: '/auth/signup' },
     !currentUser && { label: 'Sign In', href: '/auth/signin' },
+    currentUser && { label: 'Sell Tickets', href: '/tickets/new' },
+    currentUser && { label: 'My Orders', href: '/orders' },
     currentUser && { label: 'Sign Out', href: '/auth/signout' },
   ]
     .filter((linkConfig) => linkConfig)
