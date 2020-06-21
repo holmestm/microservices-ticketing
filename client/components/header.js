@@ -1,4 +1,4 @@
-// this defines the common header shown on every page
+// this defines the common header shown on every  page
 
 import Link from 'next/link';
 
