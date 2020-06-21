@@ -26,7 +26,7 @@ const start = async () => {
     NATS_CLUSTER_ID,
   } = process.env;
   try {
-    console.log('Starting Payments Service...');
+    console.log('Starting Payments Service....');
     await natsWrapper.connect(NATS_CLUSTER_ID!, NATS_CLIENT_ID!, NATS_URL!);
     console.log('Connected to NATS');
     natsWrapper.client.on('close', () => {
