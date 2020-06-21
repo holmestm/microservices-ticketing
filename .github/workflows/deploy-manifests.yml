@@ -7,6 +7,7 @@ on:
     paths:
       - 'infra/k8s/**'
       - 'infra/local/**'
+      - 'infra/k8s-prod'
 
 jobs:
   build:
