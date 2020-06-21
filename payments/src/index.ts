@@ -26,7 +26,7 @@ const start = async () => {
     NATS_CLUSTER_ID,
   } = process.env;
   try {
-    console.log('Connecting to NATS');
+    console.log('Starting Payments Service...');
     await natsWrapper.connect(NATS_CLUSTER_ID!, NATS_CLIENT_ID!, NATS_URL!);
     console.log('Connected to NATS');
     natsWrapper.client.on('close', () => {
@@ -45,7 +45,6 @@ const start = async () => {
       useUnifiedTopology: true,
       useCreateIndex: true,
     });
-    console.log('Connected to MongoDB');
   } catch (err) {
     console.error(err);
   }

@@ -28,6 +28,7 @@ const start = async () => {
   } catch (err) {
     console.error(err);
   }
+  console.log('Expiration service starting up....');
 };
 
 start();
