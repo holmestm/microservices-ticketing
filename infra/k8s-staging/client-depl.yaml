@@ -22,7 +22,7 @@ spec:
                   name: jwt-secret
                   key: JWT_KEY
             - name: INTERNAL_LB
-              value: 'http://www.ticketing.gravitaz.co.uk'
+              value: 'http://ticketing.gravitaz.co.uk/'
 ---
 apiVersion: v1
 kind: Service
