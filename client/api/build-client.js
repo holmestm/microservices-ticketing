@@ -8,7 +8,9 @@ import https from 'https';
 export default ({ req, svc = 'auth' }) => {
   if (typeof window === 'undefined') {
     return axios.create({
-      baseURL: `https://ingress-nginx-controller.ingress-nginx.svc.cluster.local`,
+      baseURL:
+        process.env.INTERNAL_LB ||
+        `https://ingress-nginx-controller.ingress-nginx.svc.cluster.local`,
       headers: req.headers,
       timeout: 500,
       httpsAgent: new https.Agent({
