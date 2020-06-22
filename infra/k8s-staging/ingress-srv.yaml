@@ -5,8 +5,6 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/use-regex: 'true'
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
-    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
 spec:
   tls:
     - hosts:
@@ -42,7 +40,7 @@ kind: Service
 metadata:
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: 'true'
-    service.beta.kubernetes.io/do-loadbalancer-hostname: 'ticketing.gravitaz.co.uk'
+    service.beta.kubernetes.io/do-loadbalancer-hostname: 'www.ticketing.gravitaz.co.uk'
   labels:
     helm.sh/chart: ingress-nginx-2.0.3
     app.kubernetes.io/name: ingress-nginx
