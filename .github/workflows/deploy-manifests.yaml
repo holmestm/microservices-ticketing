@@ -7,7 +7,7 @@ on:
     paths:
       - 'infra/k8s/**'
       - 'infra/local/**'
-      - 'infra/k8s-staging'
+      - 'infra/k8s-prod'
 
 jobs:
   build:
@@ -20,4 +20,4 @@ jobs:
       - run: doctl kubernetes cluster kubeconfig save ticketing
       - run: kubectl apply -f infra/k8s
       - run: kubectl apply -f infra/local
-      - run: kubectl apply -f infra/k8s-staging
+      - run: kubectl apply -f infra/k8s-prod
