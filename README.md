@@ -69,3 +69,37 @@ https://stackoverflow.com/questions/61365202/nginx-ingress-service-ingress-nginx
 - -> npm install typescript del-cli --save-dev
 - edit tsconfig.json: uncomment declaration and set OutDir to ./build
 - edit package.json: add clean
+
+# CI Process
+1. Added npm test:ci to package.json in auth to permit single pass test
+2. Created tests.yaml in Github using Actions tab
+3. Modified index.js in auth/src/index.ts
+4. git checkout -b dev - to create dev branch
+5. git add . - to add changes to that branch
+6. git commit -m "message"
+7. git push origin dev
+8. follow message in output to create a pull request in Github or go to github repo, select Pull Requests tab
+9. Click on New pull request to create a manual request
+10. Select 'compare' dropdown and pick dev
+11. Click on 'Create Pull Request' - allow tests to complete 
+12. Click on 'submit pull request' - 
+
+# Certification Process (in progress)
+
+This section discusses how we get Kubernetes generate a SSL certificate for our publically accessible domain name. Ref: [How to Set Up an Nginx Ingress with Cert-Manager on DigitalOcean Kubernetes](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-with-cert-manager-on-digitalocean-kubernetes) - starting from section 4
+
+1. kubectl create namespace cert-manager
+2. kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.12.0/cert-manager.yaml
+3. create and apply new issuer.yaml
+4. updated ingres-srv.yaml in k8s-prod subdirectory
+5. apply via pull-request etc.
+6. Check certificate using kubectl describe certificates
+7. Check Message and wait until complete
+
+
+
+
+
+
+
+
