@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { Order } from '../models/order';
 import {
-  ResourceNotFoundError,
+  NotFoundError,
   validateRequest,
   requireAuth,
   NotAuthorizedError,
@@ -17,7 +17,7 @@ router.get(
   async (req: Request, res: Response) => {
     const order = await Order.findById(req.params.orderId).populate('ticket');
     if (!order) {
-      throw new ResourceNotFoundError('Invalid Order');
+      throw new NotFoundError('Invalid Order');
     }
     if (order.userId !== req.currentUser!.id) {
       throw new NotAuthorizedError();

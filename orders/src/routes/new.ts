@@ -1,9 +1,5 @@
 import express, { Request, Response } from 'express';
-import {
-  requireAuth,
-  ResourceNotFoundError,
-  BadRequestError,
-} from '@gravitaz/common';
+import { requireAuth, NotFoundError, BadRequestError } from '@gravitaz/common';
 
 import { validateRequest } from '@gravitaz/common';
 import { body } from 'express-validator';
@@ -41,7 +37,7 @@ router.post(
     const { ticketId } = req.body;
     const ticket = await Ticket.findById(ticketId);
     if (!ticket) {
-      throw new ResourceNotFoundError('Ticket not found');
+      throw new NotFoundError('Ticket not found');
     }
 
     const existingOrder = await ticket.isReserved();

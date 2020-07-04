@@ -1,6 +1,6 @@
 import { Order } from '../models/order';
 import {
-  ResourceNotFoundError,
+  NotFoundError,
   NotAuthorizedError,
   OrderStatus,
 } from '@gravitaz/common';
@@ -20,7 +20,7 @@ export const cancelOrder = async function (
 ) {
   const order = await Order.findById(orderId).populate('ticket');
   if (!order) {
-    throw new ResourceNotFoundError('Order not found');
+    throw new NotFoundError('Order not found');
   }
   if (currentUserId && order.userId !== currentUserId) {
     throw new NotAuthorizedError();

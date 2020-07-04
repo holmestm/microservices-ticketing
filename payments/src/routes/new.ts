@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import {
   requireAuth,
-  ResourceNotFoundError,
+  NotFoundError,
   BadRequestError,
   NotAuthorizedError,
 } from '@gravitaz/common';
@@ -36,7 +36,7 @@ router.post(
     const { token, orderId } = req.body;
     const order = await Order.findById(orderId);
     if (!order) {
-      throw new ResourceNotFoundError('Order not found');
+      throw new NotFoundError('Order not found');
     }
     if (order.userId !== req.currentUser?.id) {
       throw new NotAuthorizedError();

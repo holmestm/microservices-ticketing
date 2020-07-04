@@ -19,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@gravitaz/common": "^1.0.36",
+    "@gravitaz/common": "^1.0.42",
     "@types/bull": "^3.14.0",
     "bull": "^3.14.0",
     "node-nats-streaming": "^0.3.2",

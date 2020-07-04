@@ -3,7 +3,7 @@ import {
   Listener,
   Subjects,
   TicketUpdatedEvent,
-  ResourceNotFoundError,
+  NotFoundError,
 } from '@gravitaz/common';
 import { QUEUE_GROUP_NAME } from '../queue-group-name';
 import { Ticket } from '../../models/ticket';
@@ -21,7 +21,7 @@ export class TicketUpdatedListener extends Listener<TicketUpdatedEvent> {
       version: version - 1,
     });
     if (!ticket) {
-      throw new ResourceNotFoundError(
+      throw new NotFoundError(
         `Invalid ticket ${id} with version ${version} in event`
       );
     }
