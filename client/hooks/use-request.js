@@ -14,7 +14,9 @@ export default ({ url, method, body, onSuccess }) => {
       console.log('props', args);
       setErrors(null);
       const response = await axios[method](url, { ...body, ...args });
-      if (onSuccess(response.data));
+      if (onSuccess) {
+        onSuccess(response.data);
+      }
       return response.data;
     } catch (err) {
       console.error(err);

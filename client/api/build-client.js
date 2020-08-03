@@ -5,7 +5,7 @@ import https from 'https';
 // holds the routing logic for our apis. The baseURL here is k8s implementation specific and has been
 // designed to work with Docker Desktop on MacOs.
 
-export default ({ req, svc = 'auth' }) => {
+const buildClient = ({ req }) => {
   if (typeof window === 'undefined') {
     return axios.create({
       baseURL:
@@ -23,3 +23,5 @@ export default ({ req, svc = 'auth' }) => {
     });
   }
 };
+
+export default buildClient;
