@@ -96,8 +96,31 @@ This section discusses how we get Kubernetes generate a SSL certificate for our 
 6. Check certificate using kubectl describe certificates
 7. Check Message and wait until complete
 
+# Security Implementation
 
-
+Authentication occurs through React login or signup front end, either posting username/password to auth signin or signup endpoints. Success will result in a JWT being added to a cookie based session store through the npmjs module cookie-session. App assumes APIs will be called with a jwt encoded in a cookie with name expess:sess e.g.
+```
+Cookie: express:sess=eyJqd3QiOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKcFpDSTZJalZtTWpBek5EaGhaVEUxWkRVMU1EQXhPREZsWkdWbU5pSXNJbVZ0WVdsc0lqb2lhVFZoYW0xQWRHVnpkQzVqYjIwaUxDSnBZWFFpT2pFMU9UVTVORFl4TWpkOS5rWXBwa0JRTVhCY2dNVXQ4ZUtOVEhDbTczSTJITE9CTGJ6YkY1SjZtbWFFIn0=
+```
+which translates to 
+```
+{"jwt":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMjAzNDhhZTE1ZDU1MDAxODFlZGVmNiIsImVtYWlsIjoiaTVham1AdGVzdC5jb20iLCJpYXQiOjE1OTU5NDYxMjd9.kYppkBQMXBcgMUt8eKNTHCm73I2HLOBLbzbF5J6mmaE"}
+```
+pasting this into jwt.io gives
+```
+Header:
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+Payload:
+{
+  "id": "5f20348ae15d5500181edef6",
+  "email": "i5ajm@test.com",
+  "iat": 1595946127
+}
+```
+Designing microservices to accept security tokens using cookies isn't ideal, since not all clients will understand cookies. Rather the mechanism should be as an Authorisation header with value 'Bearer XXX' where XXX=base64 encoded jwt
 
 
 
