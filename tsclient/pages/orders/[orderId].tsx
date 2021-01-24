@@ -20,7 +20,8 @@ const OrderShow = ({ order, currentUser }: {order: Order, currentUser: User}) =>
 
   useEffect(() => {
     const findTimeLeft = () => {
-      const msLeft: number = order.expiresAt.valueOf() - (new Date()).valueOf();
+      const msLeft: number = (new Date(order.expiresAt)).valueOf() - (new Date()).valueOf();
+      console.log(`Time left ${msLeft}`);
       setTimeLeft(Math.round(msLeft / 1000));
     };
     findTimeLeft();
@@ -55,6 +56,8 @@ const OrderShow = ({ order, currentUser }: {order: Order, currentUser: User}) =>
 OrderShow.getInitialProps = async ({ context, client, currentUser } : AuthComponentProps) => {
   const { orderId } = context.query;
   const { data } = await client.get(`/api/orders/${orderId}`);
+  console.log('Order ');
+  console.dir(data);
   return { order: data };
 };
 export default OrderShow;

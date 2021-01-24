@@ -40,6 +40,15 @@ https://stackoverflow.com/questions/61365202/nginx-ingress-service-ingress-nginx
 - Devbox - Macbook Pro running VS Code, kubectl client with context copied from Server
 - Skaffold - skaffold.yaml.local for above setup, .gcp for running within GCP
 
+Develop on Windows, back end on MacOS
+
+- Mac - run Docker Desktop with Kubernetes enabled
+  -- kubectl proxy -- address 0.0.0.0 --accept-hosts ".*" --disable-filter=true
+  -- run docker run -d --name docker_remote --restart unless-stopped -p 2375:2375 -v /var/run/docker.sock:/var/run/docker.sock holmestm/docker-remote-api:latest
+- Windows - create contexts for docker and kubernetes via
+  -- Docker:  docker context create macbook --docker "host=tcp://192.168.0.17:2375" --kubernetes "config-file=/home/tim/.kube/mac-config"
+  -- Kubernetes scp config from Mac to Windows as above with server=http://192.168.0.17:8001 (i.e. kubectl proxy)
+
 # Notes/Todos
 
 - Skaffold config for different kube contexts rather than separate files
