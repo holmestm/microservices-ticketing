@@ -51,10 +51,10 @@ build:
           - src: 'src/**/*.ts'
             dest: .
     - image: holmestm/client
-      context: client
+      context: tsclient
       docker:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: '**/*.js'
+          - src: '**/*.ts*'
             dest: .
