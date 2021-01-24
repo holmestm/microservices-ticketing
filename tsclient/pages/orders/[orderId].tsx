@@ -12,7 +12,7 @@ const OrderShow = ({ order, currentUser }: {order: Order, currentUser: User}) =>
   const { doRequest, errors } = useRequest({
     url: '/api/payments',
     method: 'post',
-    body: {
+    data: {
       orderId: order.id,
     },
     onSuccess: () => Router.push('/orders'),

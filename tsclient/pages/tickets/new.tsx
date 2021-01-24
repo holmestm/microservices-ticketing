@@ -17,7 +17,7 @@ const newTicket = () => {
   const { doRequest, errors } = useRequest({
     url: '/api/tickets',
     method: 'post',
-    body: {
+    data: {
       title,
       price,
     },

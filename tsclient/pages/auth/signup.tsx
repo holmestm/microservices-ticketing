@@ -8,7 +8,7 @@ const signup = () => {
   const { doRequest, errors } = useRequest({
     url: '/api/users/signup',
     method: 'post',
-    body: {
+    data: {
       email,
       password,
     },
@@ -18,6 +18,7 @@ const signup = () => {
   });
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    console.log(`Email is ${email}`);
     doRequest();
   };
   return (

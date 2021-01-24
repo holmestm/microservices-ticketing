@@ -3,24 +3,24 @@ import { useState } from 'react';
 
 type RequestParams = {
   url: string,
-  method: string,
-  body: any,
+  method: Method,
+  data: any,
   onSuccess: CallableFunction
 }
 
 // returns a function that will call an external endpoint, returning the response
 // from that endpoint or if it fails setting the errors state to display back to the user
 // in jsx format. Our endpoints return errors as a array of messages.
-const useRequest = ({ url, method, body, onSuccess }: RequestParams) => {
+const useRequest = ({ url, method, data, onSuccess }: RequestParams) => {
   const [errors, setErrors] = useState<JSX.Element|null>(null);
 
   const doRequest = async (args = {}) => {
     try {
       console.log('url', url);
-      console.log('body', body);
+      console.log('data', data);
       console.log('props', args);
       setErrors(null);
-      const response = await axios({ url, method, ...body, ...args });
+      const response = await axios({ url, method, data, ...args });
       if (onSuccess) {
         onSuccess(response.data);
       }

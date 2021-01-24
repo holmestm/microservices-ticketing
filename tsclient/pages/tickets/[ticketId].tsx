@@ -8,7 +8,7 @@ const TicketShow = ({ ticket } : { ticket: Ticket}) => {
   const { doRequest, errors } = useRequest({
     url: '/api/orders',
     method: 'post',
-    body: {
+    data: {
       ticketId: ticket.id,
     },
     onSuccess: (order: Order) => {

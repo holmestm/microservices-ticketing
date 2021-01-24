@@ -8,7 +8,7 @@ const signin = () => {
   const { doRequest, errors } = useRequest({
     url: '/api/users/signin',
     method: 'post',
-    body: {
+    data: {
       email,
       password,
     },
