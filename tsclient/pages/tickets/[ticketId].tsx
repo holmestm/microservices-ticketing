@@ -1,6 +1,6 @@
 import useRequest from '../../hooks/use-request';
 import Router from 'next/router';
-import { AuthComponentProps } from '../../model/authComponentProps';
+import { AuthComponentProps } from '../../model/authComponent';
 import { Order } from '../../model/orders';
 import { Ticket } from '../../model/tickets';
 

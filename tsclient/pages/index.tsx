@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { AuthComponentProps } from '../model/authComponentProps';
+import { AuthComponentProps } from '../model/authComponent';
 import { Ticket } from '../model/tickets';
 
-const LandingPage = ({ currentUser, tickets }) => {
+const LandingPage = ({ tickets } : { tickets: Ticket[]}) => {
   const ticketList = tickets.map((ticket: Ticket) => {
     return (
       <tr key={ticket.id}>

@@ -6,10 +6,11 @@ import buildClient from '../api/build-client';
 import Header from '../components/header';
 import { AppContext } from 'next/dist/pages/_app';
 import { AppProps } from 'next/dist/pages/_app';
-import { AuthComponentProps } from '../model/authComponentProps';
+import { AuthComponentProps, AuthComponentType } from '../model/authComponent';
+import { User } from '../model/user';
 
 interface AuthAppProps extends AppProps {
-  currentUser?: string
+  currentUser?: User;
 }
 
 const AppComponent = ({ Component, pageProps, currentUser }: AuthAppProps) => {
@@ -29,18 +30,14 @@ AppComponent.getInitialProps = async ({ Component, ctx: context }: AppContext) =
   const client = buildClient(context);
   const { data } = await client.get('/api/users/currentuser');
   let pageProps = {};
-  if (Component.getInitialProps) {
+  let MyComponent: AuthComponentType = Component as AuthComponentType;
+  if (MyComponent.getInitialProps) {
     let props: AuthComponentProps = {
       context,
       client,
       currentUser: data.currentUser
     }
-    let extendedComponent = Component as unknown;
-    // call the component's getInitialProps provided by the physical page visited e.g. index.js, auth/signup.js
-    
-    // @ts-ignore - we are passing additional args to those defined in the next.js method signature
-    pageProps = await Component.getInitialProps(props);
-    console.log(pageProps);
+    pageProps = await MyComponent.getInitialProps(props);
   }
   return { pageProps, ...data };
 };

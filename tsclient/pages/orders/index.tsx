@@ -1,4 +1,4 @@
-import { AuthComponentProps } from "../../model/authComponentProps";
+import { AuthComponentProps } from "../../model/authComponent";
 import { Order } from "../../model/orders";
 
 const OrderIndex = ({ orders }: {orders: Order[]}) => {

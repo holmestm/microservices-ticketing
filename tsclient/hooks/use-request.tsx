@@ -16,11 +16,8 @@ const useRequest = ({ url, method, data, onSuccess }: RequestParams) => {
 
   const doRequest = async (args = {}) => {
     try {
-      console.log('url', url);
-      console.log('data', data);
-      console.log('props', args);
       setErrors(null);
-      const response = await axios({ url, method, data, ...args });
+      const response = await axios({ url, method, data: { ...data, ...args }});
       if (onSuccess) {
         onSuccess(response.data);
       }

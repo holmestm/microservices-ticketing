@@ -4,7 +4,7 @@ import useRequest from '../../hooks/use-request';
 import Router from 'next/router';
 import { Order } from '../../model/orders';
 import { User } from '../../model/user';
-import { AuthComponentProps } from '../../model/authComponentProps';
+import { AuthComponentProps, AuthComponentType } from '../../model/authComponent';
 
 const OrderShow = ({ order, currentUser }: {order: Order, currentUser: User}) => {
   const [timeLeft, setTimeLeft] = useState(0);
