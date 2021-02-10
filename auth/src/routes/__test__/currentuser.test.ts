@@ -23,7 +23,7 @@ it('responds with null if not authenticated', async () => {
 });
 
 it('session management should work across requests', async () => {
-  const agent = request.agent(app);
+  const agent = request.agent(app); //agent will emulate browser cookie behaviour
 
   await agent
     .post('/api/users/signup')

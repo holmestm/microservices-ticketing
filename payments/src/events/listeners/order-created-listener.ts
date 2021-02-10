@@ -1,4 +1,4 @@
-// if we see an order created event we need to lock the ticket to prvent changes to it's attributes
+// if we see an order created event we need to lock the ticket to prevent changes to it's attributes
 import { Listener, OrderCreatedEvent, Subjects } from '@gravitaz/common';
 import { Message } from 'node-nats-streaming';
 import { QUEUE_GROUP_NAME } from '../queue-group-name';

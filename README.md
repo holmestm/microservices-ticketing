@@ -131,7 +131,6 @@ Payload:
 ```
 Designing microservices to accept security tokens using cookies isn't ideal, since not all clients will understand cookies. Rather the mechanism should be as an Authorisation header with value 'Bearer XXX' where XXX=base64 encoded jwt
 
+# Use of Mongoose optimistic concurrency control to ensure data consistency on update events
 
-
-
-
+The Nats streaming service does not guarantee to deliver messages in order, so to ensure consistency of data in this asynchronous flow we use Mongo versioning to ensure updates are only applied in the correct order. Each entity record in Mongo has a version key which by default has the name __V. By adopted convention we tell Mongo to change this attribute to 'version' using the <schema>.set('versionKey', 'version'). We then tell Mongo to apply optimistic version control using <schema>.plugin(updateIfCurrentPlugin). This only really applies on update operations, and we can see it in action in the ticket-updated-lister.ts file of the orders microservice. When we receive a message that tells us to update a ticket record in the order database, we only process the update if the entity in the database has a version 1 less that the version number in the message. If it doesn't we throw an error and ignore the message. We expect Nats to try again later, which means we don't lose messages. 
