@@ -1,5 +1,6 @@
 import request from 'supertest';
 import { app } from '../../app';
+import { CookieAccessInfo } from 'cookiejar';
 
 it('responds with details about the current user', async () => {
   const cookie = await global.signin();
@@ -40,4 +41,5 @@ it('session management should work across requests', async () => {
 
   response = await agent.get('/api/users/currentuser').send().expect(200);
   expect(response.body.currentUser).toBeNull();
+
 });
